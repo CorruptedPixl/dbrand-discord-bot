@@ -28,3 +28,7 @@ If you see `Pong! The current ping is 148 ms` the bot's up and running!
 ## Built With
 
 - [Discord.js](https://discord.js.org/#/) - The JavaScript framework used
+
+## Special thanks to
+
+[Misly](https://github.com/Misly16) for helping with the bot's structure and some examples!
