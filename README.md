@@ -1,5 +1,7 @@
 # dbrand-discord-bot
 
+## What's this
+
 A custom built Discord bot using Discord.js V12 for the [dbrand server](https://discord.gg/dbrand).
 
 ### Prerequisites
