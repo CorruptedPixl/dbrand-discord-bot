@@ -21,7 +21,7 @@ module.exports = {
         // .then(msg => {
         //     msg.delete(verifyTimeoutDelay + msgDeleteDelay);
         // });
-        log("FUCK")
+
         message.react(emojiMax).then(() => message.react(emojiMaxBad)); //Adds 2 reactions to the member's message
 
         const filter = (reaction, user) => {
