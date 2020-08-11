@@ -6,5 +6,5 @@
 !index.js
 !config.json
 
-!commands/command-config/sitemap-arrays.json
-!commands/misc/
+!commands/*
+commands/assets
