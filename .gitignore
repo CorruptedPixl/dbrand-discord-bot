@@ -7,4 +7,4 @@
 !config.json
 
 !commands/command-config/sitemap-arrays.json
-!commands/*.js
+!commands/misc/
