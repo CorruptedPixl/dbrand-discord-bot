@@ -1,0 +1,10 @@
+*
+
+!README.md
+!.gitignore
+
+!index.js
+!config.json
+
+!commands/command-config/sitemap-arrays.json
+!commands/*.jsgit
