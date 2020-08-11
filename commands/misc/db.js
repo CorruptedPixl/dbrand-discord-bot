@@ -54,7 +54,7 @@ module.exports = {
                     if (!isTextOnly) {
                         message.channel.send("Country codes and emoji's are not supported. Please type part of the country's name to search.")
                             .then(msg => {
-                                msg.delete(msgDeleteDelay);
+                                msg.delete({ timeout: msgDeleteDelay });
                             });
                     }
                     const searchTerms = args.slice(1, 3).join("-");                                       //combines arg[1] and arg[2] to also find "united-states" and such
@@ -93,7 +93,7 @@ module.exports = {
                 } else {
                     message.channel.send("Please type *(part)* of the county you want to ship to after the command. **!db ship belgium**")
                         .then(msg => {
-                            msg.delete(msgDeleteDelay);
+                            msg.delete({ timeout: msgDeleteDelay });
                         });
                 }
             }
@@ -102,7 +102,7 @@ module.exports = {
                 message.reply("Unknown argument. Please choose from `grip, support, help, skins, prism or shipping`")
                     .then(message.delete())
                     .then(msg => {
-                        msg.delete(msgDeleteDelay);
+                        msg.delete({ timeout: msgDeleteDelay });
                     });
             }
 
@@ -169,7 +169,7 @@ module.exports = {
             message.delete();
             message.channel.send(`Invalid command, please try again ${message.member} \nCurrent commands are !db grip, support, shipping, skins and prism.`)
                 .then(msg => {
-                    msg.delete(msgDeleteDelay)
+                    msg.delete({ timeout: msgDeleteDelay })
                 });
         }
 

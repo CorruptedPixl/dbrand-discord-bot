@@ -6,7 +6,7 @@ module.exports.run = async (client, message, args) => {
     message.channel.bulkDelete(1);
     message.channel.send(`This module isn't finished yet. Bug Pixl about it or something. (I head money is a good motivator ;) )`)
         .then(msg => {
-            msg.delete(msgDeleteDelay);
+            msg.delete({ timeout: msgDeleteDelay });
         });
 }
 

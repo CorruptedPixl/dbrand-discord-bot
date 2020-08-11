@@ -13,7 +13,7 @@ module.exports.run = async (client, message, args) => {
         if (messageDeleteAmount <= 0) {                                                                  //Handles an error if the user enters a negative value or 0
             message.channel.send(`You're an absolute dipshit, ${message.member}. You can't purge a negative amount of messages!`)
                 .then(msg => {
-                    msg.delete(msgDeleteDelay);
+                    msg.delete({ timeout: msgDeleteDelay });
                 });
         }
 
@@ -21,7 +21,7 @@ module.exports.run = async (client, message, args) => {
             message.channel.bulkDelete(100);
             message.channel.send(`You can only delete 100 messages at a time ${message.member}.`)
                 .then(msg => {
-                    msg.delete(msgDeleteDelay);
+                    msg.delete({ timeout: msgDeleteDelay });
                 });
         }
 
@@ -33,7 +33,7 @@ module.exports.run = async (client, message, args) => {
             message.channel.bulkDelete(1);
             message.channel.send(`How about you try and enter a number this time around? ${message.member}`)
                 .then(msg => {
-                    msg.delete(msgDeleteDelay)
+                    msg.delete({ timeout: msgDeleteDelay })
                 });
         }
     }
@@ -42,7 +42,7 @@ module.exports.run = async (client, message, args) => {
         message.channel.bulkDelete(1);
         message.channel.send(`You don't have permission to use that command ${message.member}`)                 //Send error message when a non-admin/mod user tries to use the bot
             .then(msg => {
-                msg.delete(msgDeleteDelay)
+                msg.delete({ timeout: msgDeleteDelay })
             });
 
     }
