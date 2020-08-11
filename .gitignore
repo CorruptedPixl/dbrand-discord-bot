@@ -6,5 +6,5 @@
 !index.js
 !config.json
 
-!commands/*
-commands/assets
+commands/*
+!commands/assets
