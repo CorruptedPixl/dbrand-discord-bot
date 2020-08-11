@@ -9,4 +9,4 @@ bot.commands = new Collection();
 bot.aliases = new Collection();
 bot.prefix = config.prefix;
 
-bot.login(process.env.TOKEN);
+bot.login(process.env.CLIENT_TOKEN);
