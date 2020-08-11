@@ -1,6 +1,6 @@
 // eslint-disable-next-line no-unused-vars
 const Discord = require("discord.js");
-const { msgDeleteDelay, prefix } = require('../config.json');
+const { msgDeleteDelay, prefix } = require('../../config.json');
 const fs = require("fs");
 
 module.exports.run = async (client, message, args) => {
@@ -64,5 +64,4 @@ module.exports.run = async (client, message, args) => {
 module.exports.help = {
     name: "help",
     description: `${prefix}help lists all available commands. Do ${prefix}help [command name] to get specific info about a command.`,
-    helpimage: "./commands/assets/help-help.png"
 }
