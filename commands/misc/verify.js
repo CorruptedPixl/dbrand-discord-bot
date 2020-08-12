@@ -2,30 +2,58 @@
 const Discord = require("discord.js");
 const { msgDeleteDelay, prefix } = require('../../config.json');
 const { log } = require("console");
+const { format } = require("path");
 
 module.exports = {
     run: async (client, message) => {
         const verifyTimeoutDelay = 60000;   //Sets the timeout of the command (default: 60000 aka 1 min)
 
-        //Define emojis
-        const emojiMax = "671045011487326228";
-        // const emojiMax = await client.emojis.get("671045011487326228");
-        // const emojiHal = await client.emojis.get("520742867933724676");
-        // const emojiPyramid = await client.emojis.get("682715410289786887");
-        // const emojiCube = await client.emojis.get("664627160551522317");
-        // const emojiMaxBad = client.emojis.find(emoji => emoji.name === "max_flipoff");
-        const emojiMaxBad = "671045012250689576";
+        const emojis = {
+            ":max:": "619335115268423691",
+            ":max_flipoff:": "671045012250689576",
+            ":max_approved:": "671045011487326228",
+            // "a:corrupted:": "563134699342659596",
+            // ":robot:": "547914045643030543",
+            ":yes:": "706150991040610354",
+            ":no:": "706150990788689962",
+            // ":pyramid2:": "664924147289161728",
+            // ":cube2:": "664627160551522317",
+            // ":pyramid:": "682715410289786887"
+        }
 
-        message.reply(`Almost there! **Click the** ${emojiMax} **emote on your message!**`)
+        let emojiOne = { "key": Object.keys(emojis)[Object.keys(emojis).length * Math.random() << 0] }
+        let emojiTwo = { "key": Object.keys(emojis)[Object.keys(emojis).length * Math.random() << 0] }
+        let emojiThree = { "key": Object.keys(emojis)[Object.keys(emojis).length * Math.random() << 0] }
+
+        while (emojiTwo.key == emojiOne.key) {
+            log('Rerolling emoji');
+            emojiTwo = { "key": Object.keys(emojis)[Object.keys(emojis).length * Math.random() << 0] }
+        }
+
+        while (emojiThree.key == emojiTwo.key) {
+            log('Rerolling emoji');
+            emojiThree = { "key": Object.keys(emojis)[Object.keys(emojis).length * Math.random() << 0] }
+        }
+
+        emojiOne.value = emojis[emojiOne.key];
+        emojiTwo.value = emojis[emojiTwo.key];
+        emojiThree.value = emojis[emojiThree.key];
+
+
+        message.reply(`Almost there! **Click the** <${emojiOne.key + emojiOne.value}> **emote on your message!**`)
             .then(message.delete({ timeout: verifyTimeoutDelay }))
-        // .then(msg => {
-        //     msg.delete(verifyTimeoutDelay + msgDeleteDelay);
-        // });
+            .then(msg => {
+                msg.delete({ timeout: verifyTimeoutDelay + msgDeleteDelay });
+            });
 
-        message.react(emojiMax).then(() => message.react(emojiMaxBad)); //Adds 2 reactions to the member's message
+        //Add reactions to the member's message
+        message.react(emojiOne.value)
+            .then(() => message.react(emojiTwo.value))
+            .then(() => message.react(emojiThree.value))
+            .catch(() => console.error('One of the emojis failed to react.'));
 
         const filter = (reaction, user) => {
-            return ["max_approved", "max_flipoff"].includes(reaction.emoji.name) && user.id === message.author.id;
+            return [emojiOne.value, emojiTwo.value, emojiThree.value].includes(reaction.emoji.id) && user.id === message.author.id;
         };
 
         message.awaitReactions(filter, {
@@ -36,7 +64,7 @@ module.exports = {
             .then(collected => {
                 const reaction = collected.first();
 
-                if (reaction.emoji.name === "max_approved") {
+                if (reaction.emoji.id === emojiOne.value) {
                     message.reply("you're verified!")
                         .then(msg => {
                             msg.delete({ timeout: msgDeleteDelay });
