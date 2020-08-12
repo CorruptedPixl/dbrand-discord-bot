@@ -40,7 +40,6 @@ module.exports = {
             const commandfile = bot.commands.get(commandName) || bot.commands.get(bot.aliases.get(commandName))
 
             try {
-                console.log(commandfile.info.help);
                 if (typeof commandfile.info.help === 'undefined' || commandfile.info.help === '') throw "No help info for given command.";
                 else {
                     const helpEmbed = new MessageEmbed()
