@@ -1,69 +1,75 @@
 // eslint-disable-next-line no-unused-vars
-const Discord = require("discord.js");
+const { MessageEmbed } = require("discord.js");
 const { msgDeleteDelay, prefix } = require('../../config.json');
-const fs = require("fs");
+const { readdirSync } = require("fs")
 
 module.exports = {
-    run: async (client, message, args) => {
+    run: async (bot, message, args) => {
 
-        let commandName = args[0];                                                              //Gets the command name from the first argument
-        let command;                                                                            //Defines the variable but doesn't assign anything yet
+        let commandName = args[0];
 
-        if (args === undefined || args.length == 0) {                                           //Checks if the args array is empty, aka if the user just posted "!help" with no specific command as arg
+        if (args === undefined || args.length == 0) {
+            // don't forget to add the same categories in the command.js handler
+            const categories = ["misc", "moderation"];
+            const commands = [];
 
-            let commandFiles = fs.readdirSync(__dirname).filter(file => file.endsWith('.js'));  //Reads all files in the command folder (__dirname is current folder) that end in .js, aka all commands
-            commandFiles = commandFiles.map(file => file.split('.js')[0]);                      //Removes the .js extention
+            const getCommands = dirs => {
+                let commandFiles = readdirSync(`commands/${dirs}/`).filter(file => file.endsWith('.js'));
+                commands.push(commandFiles.map(file => file.split('.js')[0]));
+            }
 
-            //Instantiates a new embed. Previously the help command just sent a message, but this was ugly. This has now been changed to an embed.
-            const embed = new Discord.RichEmbed()
+            categories.forEach(category => getCommands(category));
+
+
+
+            const embed = new MessageEmbed()
                 .setColor(0xffbb00)
                 .setTitle("**Help**")
                 .setDescription('**Use `!help command` for specific help!**')
-                .setThumbnail('https://cdn.discordapp.com/attachments/607657180673343500/685924479385468952/db-logo.png')
-                .addField('Current commands', `${commandFiles.join(`, `)}`, true)               //Sends a list of all commands
+                .setThumbnail('https://cdn.discordapp.com/attachments/520366222835974164/743174157440647279/db-logo-bright.png')
+                .addField('\u200B', 'Current commands are:', true)
+
+            commands.forEach((category, i) => {
+                embed.addField(categories[i], category.join(`, `))
+            });
+
             message.channel.send(embed);
 
-            return;                                                                             //!Return statement!
-        } else if (fs.existsSync(__dirname + `/${commandName}.js`)) {
-            command = require(__dirname + `/${commandName}.js`);                                           //Loads the command file because the "help description" data and image location is in that
-        } else {                                                                                //If the command doesn't exist, send an error message
-            message.delete();
-            message.channel.send(`Selected command doesn't exist.`)
-                .then(msg => {
-                    msg.delete({ timeout: msgDeleteDelay });
-                });
-            return                                                                              //!Return statement!
-        }
+        } else {
 
+            const commandfile = bot.commands.get(commandName) || bot.commands.get(bot.aliases.get(commandName))
 
-        let helpimage = command.help.helpimage;                                                 //Gets the image path from the command file help secion
+            try {
+                console.log(commandfile.info.help);
+                if (typeof commandfile.info.help === 'undefined' || commandfile.info.help === '') throw "No help info for given command.";
+                else {
+                    const helpEmbed = new MessageEmbed()
+                        .setColor(0xffbb00)
+                        .setTitle(`**${commandfile.info.name}**`)
+                        .setDescription(commandfile.info.help)
 
-        try {
+                    message.channel.send(helpEmbed);
+                }
 
-            if (!commandName) {
-                message.channel.send(`No command selected, please use \`${prefix}help command\``);
-            }
+            } catch (error) {
 
-            if (fs.existsSync(helpimage)) {                                                     //Tests if the help image exists
-                message.channel.send(command.help.description, {
-                    files: [`${command.help.helpimage}`]
-                });
-            } else {                                                                            //If the help image doesn't exist, it just sends the description and an error message
-                message.channel.send(command.help.description);
-                message.channel.send("Help image doesn't exist, dm Pixl asap!")
+                const getRightErrorMessage = error => {
+                    if (typeof error === 'object') return error[0];
+                    else return error;
+                }
+
+                message.delete();
+                message.channel.send(getRightErrorMessage(error) || "An error occured.")
                     .then(msg => {
                         msg.delete({ timeout: msgDeleteDelay });
                     });
             }
-
-        } catch (error) {
-            console.error(error);
-            message.channel.send("There was an error trying to execute that command! Please let pixl know of this error");
         }
     },
 
     info: {
         name: "help",
         description: `${prefix}help lists all available commands. Do ${prefix}help [command name] to get specific info about a command.`,
+        help: "Displays this message"
     }
 }
