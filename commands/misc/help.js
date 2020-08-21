@@ -57,11 +57,15 @@ module.exports = {
                     else return error;
                 }
 
+                const errorMessage = getRightErrorMessage(error);
+
                 message.delete();
-                message.channel.send(getRightErrorMessage(error) || "An error occured.")
-                    .then(msg => {
-                        msg.delete({ timeout: msgDeleteDelay });
-                    });
+                if (errorMessage) {
+                    message.channel.send(errorMessage)
+                        .then(msg => {
+                            msg.delete({ timeout: msgDeleteDelay });
+                        });
+                }
             }
         }
     },
@@ -69,6 +73,7 @@ module.exports = {
     info: {
         name: "help",
         description: `${prefix}help lists all available commands. Do ${prefix}help [command name] to get specific info about a command.`,
-        help: "Displays this message"
+        help: "Displays this message",
+        aliases: ["h"]
     }
 }
