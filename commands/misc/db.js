@@ -10,8 +10,10 @@ const { shippingArray, /*howtoArray*/ } = require('../../commands/command-config
 module.exports = {
     run: async (client, message, args) => {
 
-        let destination;                                                                                            //Defines global variables
-        let link = "https://dbrand.com/";                                                                           //Sets standard link to add to later
+        //Defines global variables
+        let destination;
+        //Sets standard link to add to later
+        let link = "https://dbrand.com/";
 
 
         if (args.length == 0) {                                                                                     //Deletes user message and sends an error if they don't give any args
@@ -177,6 +179,7 @@ module.exports = {
 
     info: {
         name: "db",
-        description: `Use \`${prefix}db x y\` to post a link in chat to a specific product. For example \`${prefix}db grip op7p\``
+        description: `Use \`${prefix}db x y\` to post a link in chat to a specific product. For example \`${prefix}db grip op7p\``,
+        help: "get quick links to skins, grip, shipping info and support"
     }
 }

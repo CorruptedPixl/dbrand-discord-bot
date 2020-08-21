@@ -4,6 +4,7 @@ module.exports = {
     },
     info: {
         name: "ping",
-        description: `pings the bot and reports the... ping...`
+        description: `pings the bot and reports the... ping...`,
+        help: "Get the current ping"
     }
 }

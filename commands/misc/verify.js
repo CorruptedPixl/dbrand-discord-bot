@@ -21,15 +21,17 @@ module.exports = {
             // ":pyramid:": "682715410289786887"
         }
 
+        //Assign random emojis from the list above
         let emojiOne = { "key": Object.keys(emojis)[Object.keys(emojis).length * Math.random() << 0] }
         let emojiTwo = { "key": Object.keys(emojis)[Object.keys(emojis).length * Math.random() << 0] }
         let emojiThree = { "key": Object.keys(emojis)[Object.keys(emojis).length * Math.random() << 0] }
 
+
+        //Make sure that each emoji is unique to avoid having 3x the same one
         while (emojiTwo.key == emojiOne.key) {
             log('Rerolling emoji');
             emojiTwo = { "key": Object.keys(emojis)[Object.keys(emojis).length * Math.random() << 0] }
         }
-
         while (emojiThree.key == emojiTwo.key) {
             log('Rerolling emoji');
             emojiThree = { "key": Object.keys(emojis)[Object.keys(emojis).length * Math.random() << 0] }
@@ -86,7 +88,8 @@ module.exports = {
 
     info: {
         name: "verify",
-        description: `${prefix}verify verifies the person after completing a challenge`
+        description: `${prefix}verify verifies the person after completing a challenge`,
+        help: "Verifies the user by clicking an emoji"
     }
 
 }
