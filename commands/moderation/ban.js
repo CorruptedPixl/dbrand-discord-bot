@@ -1,17 +1,19 @@
-/* eslint-disable no-unused-vars */
-const Discord = require("discord.js");
-const { msgDeleteDelay, prefix } = require('../config.json');
+require('dotenv').config()
+const msgDeleteDelay = process.env.msgDeleteDelay;
+const prefix = process.env.prefix;
 
-module.exports.run = async (client, message, args) => {
-    message.channel.bulkDelete(1);
-    message.channel.send(`This module isn't finished yet. Bug Pixl about it or something. (I head money is a good motivator ;) )`)
-        .then(msg => {
-            msg.delete({ timeout: msgDeleteDelay });
-        });
-}
+module.exports = {
+    run: async (client, message, args) => {
+        message.channel.bulkDelete(1);
+        message.channel.send(`This module isn't finished yet. Bug Pixl about it or something.`)
+            .then(msg => {
+                msg.delete({ timeout: msgDeleteDelay });
+            });
+    },
 
-module.exports.help = {
-    name: "ban",
-    description: `Usage: ${prefix}ban id reason`,
-    helpimage: "./commands/assets/ban_help.png"
+    info: {
+        name: "ban",
+        description: `Usage: ${prefix}ban id reason`,
+        help: "Bans specified user"
+    }
 }

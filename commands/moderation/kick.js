@@ -1,10 +1,14 @@
-const Discord = require("discord.js");
-const { msgDeleteDelay } = require('../config.json');
+require('dotenv').config()
+const msgDeleteDelay = process.env.msgDeleteDelay;
+const prefix = process.env.prefix;
 
-module.exports.run = async (client, message, args) => {
+module.exports = {
+    run: async (client, message, args) => {
 
-}
+    },
 
-module.exports.help = {
-    name: "kick"
-}
+    info: {
+        name: "kick",
+        help: "Kicks specified user"
+    }
+} 
