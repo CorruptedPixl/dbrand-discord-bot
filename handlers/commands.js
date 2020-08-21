@@ -15,5 +15,6 @@ module.exports = (bot) => {
     };
 
     // add command categories below (and as folder in the /commands/ dir)
-    ["misc"/*, "moderation"*/].forEach(category => load(category));
+    // don't forget to update help.js command too
+    ["misc", "moderation"].forEach(category => load(category));
 };
