@@ -69,26 +69,26 @@ module.exports = {
                         link = `https://dbrand.com/shipping/${matches[0]}`;
                         destination = matches[0];
 
-                        let shippingEmbed = new Discord.RichEmbed()
+                        let shippingEmbed = new Discord.MessageEmbed()
                             .setTitle(`Shipping to ${destination}`)
                             .setDescription(`Click the link above to see shipping time to ${destination}. \nYou can also [view all shipping destinations here](https://dbrand.com/shipping)`)
                             .setURL(`${link}`)
                             .setColor('#ffbb00')
                             .setTimestamp()
-                            .attachFiles(['../DevBot V1/commands/assets/db-logo.png'])
+                            .attachFiles(['../dbrand-bot-V2/commands/assets/db-logo.png'])
                             .setFooter('dbrand.com', 'attachment://db-logo.png')
 
                         message.channel.send(shippingEmbed);
                     } else if (isTextOnly) {
                         link = link + "shipping";
 
-                        let shippingEmbedNotFound = new Discord.RichEmbed()
+                        let shippingEmbedNotFound = new Discord.MessageEmbed()
                             .setTitle(`Check shipping times here!`)
                             .setDescription(`Country not found.\nYou can [view all shipping destinations here](https://dbrand.com/shipping)`)
                             .setURL(`${link}`)
                             .setColor('#ffbb00')
                             .setTimestamp()
-                            .attachFiles(['../DevBot V1/commands/assets/db-logo.png'])
+                            .attachFiles(['../dbrand-bot-V2/commands/assets/db-logo.png'])
                             .setFooter('dbrand.com', 'attachment://db-logo.png')
                         message.channel.send(shippingEmbedNotFound);
                     }
@@ -136,18 +136,18 @@ module.exports = {
             }
 
 
-            let dbEmbedLink = new Discord.RichEmbed()
+            let dbEmbedLink = new Discord.MessageEmbed()
 
                 .setTitle(link)
                 .setURL(link)
                 .setDescription(link)
                 .setThumbnail('attachment://db-logo.png')
                 .addField('Regular field title', 'Some value here')
-                .addBlankField()
+                .addField('\u200B', '\u200B')
                 .setColor('#ffbb00')
                 .addField('Inline field title', 'Some value here', true)
                 .addField('Inline field title', 'Some value here', true)
-                .attachFiles(['../DevBot V1/commands/assets/db-logo.png'])
+                .attachFiles(['../dbrand-bot-V2/commands/assets/db-logo.png'])
                 .setImage('attachment://db-logo.png')
                 .setTimestamp()
                 .setFooter('dbrand.com', 'attachment://db-logo.png')
@@ -157,7 +157,7 @@ module.exports = {
             // .setURL(`${link}`)
             // .setColor('#ffbb00')
             // .setTimestamp()
-            // .attachFiles(['../DevBot V1/commands/assets/db-logo.png'])
+            // .attachFiles(['../dbrand-bot-V2/commands/assets/db-logo.png'])
             // .setFooter('dbrand.com', 'attachment://db-logo.png')
 
 
