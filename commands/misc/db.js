@@ -2,8 +2,10 @@ const Discord = require("discord.js");
 //! Replace config with .env
 // const { msgDeleteDelay, prefix } = require('./config.json');
 require('dotenv').config()
+const fetch = require('node-fetch');
 const msgDeleteDelay = process.env.msgDeleteDelay;
 const prefix = process.env.prefix;
+const shippingDataUrl = process.env.shippingDataUrl;
 
 const { shippingArray, /*howtoArray*/ } = require('../../commands/command-config/sitemap-arrays.json');
 
@@ -45,7 +47,7 @@ module.exports = {
                 message.delete();
             }
 
-
+            //!PROVISIONED FOR REMOVAL IN NEXT RELEASE
             const caseShipping = () => {
                 let matches;
                 message.delete();                                                                      //Deletes user's message
@@ -100,6 +102,111 @@ module.exports = {
                 }
             }
 
+            const caseShippingNEW = () => {
+                let matches;
+                //Deletes user's message
+                message.delete();
+
+                //Checks for an argument
+                if (args[1] != undefined) {
+
+                    //Tests via a regex if the argument is only characters, not emoji's or slashes or numbers
+                    let isTextOnly = /^[A-Z-]+$/i.test(args[1]);
+                    if (!isTextOnly) {
+                        message.channel.send("Emoji's and special chars are not supported. Please type part of the country's name or two letter country code to search.")
+                            .then(msg => {
+                                msg.delete({ timeout: msgDeleteDelay });
+                            });
+                    }
+
+                    if (args[1].length == 2){
+
+                        try {
+                            // Try getting the data from dbrand's shipping api
+                            fetch(`${shippingDataUrl}${args[1]}`)
+                            .then(res => res.json())
+                            .then(json => fillData(json))
+                            .catch(err => {
+                                console.error(`Fetching [${shippingDataUrl}${args[1]}] FAILED, ${err}`);
+                                message.channel.send(`\`${err}\` \nLooks like something went wrong. If it keeps failing, please ping Pixl`)
+                                .then(msg => {
+                                    msg.delete({ timeout: msgDeleteDelay });
+                                });
+                            })
+    
+                            // Create and send the embed with data from the api res
+                            const fillData = json => {
+                                if (!json.is_valid){
+                                    throw new Error('Invalid country code')
+                                }
+                                const encodedURI = encodeURI(`${link}shipping/${json.country}`);
+
+                                let dbrandShippingEmbed = new Discord.MessageEmbed()
+                                .setTitle(`Shipping to ${json.country}`)
+                                .setDescription(`Click the link above to see shipping time to ${json.country}. \nYou can also [view all shipping destinations here](https://dbrand.com/shipping)`)
+                                .setURL(encodedURI)
+                                .setColor('#ffbb00')
+                                .setTimestamp()
+                                .setThumbnail(`https://dbrand.com/${json.country_flag}`)
+                                .setFooter('dbrand.com', 'attachment://db-logo.png')
+                                
+                                message.channel.send(dbrandShippingEmbed);
+    
+                            }
+                        } catch (error) {
+                            message.channel.send(`Looks like something went wrong. Try again in a bit. If it keeps failing, please ping Pixl`)
+                            .then(msg => {
+                                msg.delete({ timeout: msgDeleteDelay });
+                            });
+                        }
+
+
+                    } 
+                    // If not 2 character arg (usually country code)
+                    else {
+
+                        //combines arg[1] and arg[2] to also find "united-states" and such
+                        const searchTerms = args.slice(1, 3).join("-");
+                        
+                        //Creates an array with all country's found that match part of the substring (arg1)
+                        matches = shippingArray.filter(s => s.includes(searchTerms.toString().toLowerCase()));
+                        
+                        if (matches.length > 0) {
+                            link = `https://dbrand.com/shipping/${matches[0]}`;
+                            destination = matches[0];
+                            
+                            let shippingEmbed = new Discord.MessageEmbed()
+                            .setTitle(`Shipping to ${destination}`)
+                            .setDescription(`Click the link above to see shipping time to ${destination}. \nYou can also [view all shipping destinations here](https://dbrand.com/shipping)`)
+                            .setURL(`${link}`)
+                            .setColor('#ffbb00')
+                            .setTimestamp()
+                            .attachFiles(['../dbrand-bot-V2/commands/assets/db-logo.png'])
+                            .setFooter('dbrand.com', 'attachment://db-logo.png')
+                            message.channel.send(shippingEmbed);
+
+                        } else if (isTextOnly) {
+                            link = link + "shipping";
+                            
+                            let shippingEmbedNotFound = new Discord.MessageEmbed()
+                            .setTitle(`Check shipping times here!`)
+                            .setDescription(`Country not found.\nYou can [view all shipping destinations here](https://dbrand.com/shipping)`)
+                            .setURL(`${link}`)
+                            .setColor('#ffbb00')
+                            .setTimestamp()
+                            .attachFiles(['../dbrand-bot-V2/commands/assets/db-logo.png'])
+                            .setFooter('dbrand.com', 'attachment://db-logo.png')
+                            message.channel.send(shippingEmbedNotFound);
+                        }
+                    }
+                    } else {
+                        message.reply("Please type (part of) the county you want to ship to after the command. **!db ship GB**")
+                        .then(msg => {
+                            msg.delete({ timeout: msgDeleteDelay });
+                        });
+                }
+            }
+
             const caseUnknown = () => {
                 message.reply("Unknown argument. Please choose from `grip, support, help, skins, prism or shipping`")
                     .then(message.delete())
@@ -128,8 +235,8 @@ module.exports = {
                 case "p": casePrism(); break;
 
                 //Larger commands
-                case "shipping": caseShipping(); break;
-                case "ship": caseShipping(); break;
+                case "shipping": caseShippingNEW(); break;
+                case "ship": caseShippingNEW(); break;
 
                 default:
                     caseUnknown(); break;
