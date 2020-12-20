@@ -3,6 +3,5 @@ commands/assets/
 node_modules
 .env
 .eslintrc.json
-package.json
 package-lock.json
 TODO.txt
