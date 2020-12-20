@@ -126,7 +126,6 @@ module.exports = {
               fetch(`${shippingDataUrl}${args[1]}`)
                 .then(res => res.json())
                 .then(json => fillData(json))
-                .then(json => loadShippingOptions(json))
                 .catch(err => {
                   console.error(`Fetching [${shippingDataUrl}${args[1]}] FAILED, ${err}`);
                   message.channel.send(`\`${err}\` \nLooks like something went wrong. If it keeps failing, please ping Pixl`)
@@ -136,34 +135,41 @@ module.exports = {
                 });
 
               // Create and send the embed with data from the api res
-              const fillData = json => {
+              const fillData = async json => {
                 if (!json.is_valid){
                   throw new Error(`Invalid country code`);
                 }
                 const encodedURI = encodeURI(`${link}shipping/${json.country}`);
+                const shippingOptions = await loadShippingOptions(json);
+                // console.error(eval(shippingOptions));
 
                 const dbrandShippingEmbed = new Discord.MessageEmbed()
                   .setTitle(`Shipping to ${json.country}`)
                   .setDescription(`Click the link above to see shipping time to ${json.country}. \nYou can also [view all shipping destinations here](https://dbrand.com/shipping)`)
-                  .setURL(encodedURI)
+				          .setURL(encodedURI)
+                  // .addFields(eval(shippingOptions))
                   .setColor(`#ffbb00`)
                   .setTimestamp()
                   .setThumbnail(`https://dbrand.com/${json.country_flag}`)
                   .setFooter(`dbrand.com`, `attachment://db-logo.png`);
 
+                shippingOptions.forEach(option => dbrandShippingEmbed.addField(option.name, option.value, true));
 
-                console.log(`SENT`);
-                console.log(dbrandShippingEmbed);
                 message.channel.send(dbrandShippingEmbed);
 
               };
 
               // Add shipping options
-              const loadShippingOptions = async () => {
-                console.log(`RAN FUNCTION`);
-                const fetchShippingData = url => {
-                  fetch(`${shippingDataUrl}${args[1]}/${url}`)
+              const loadShippingOptions = async json => {
+                /* eslint-disable-next-line*/
+                let shippingData = [];
+
+				
+                for (const shippingOption of json.shipping_services_available) {
+
+                  const pog = await fetch(`${shippingDataUrl}${args[1]}/${shippingOption.url}`)
                     .then(res => res.json())
+                    .then(json => shippingData.push({name: shippingOption.title, value: json[`time-title`]}))
                     .catch(err => {
                       //TODO add error handling function to clean up this mess throughout the code
                       console.error(`Fetching [${shippingDataUrl}${args[1]}] FAILED, ${err}`);
@@ -172,14 +178,8 @@ module.exports = {
                           msg.delete({ timeout: msgDeleteDelay });
                         });
                     });
-                };
-                for (const shippingOption of json.shipping_services_available) {
-                  console.log(`RAN FOR LOOP`);
-
-                  const data = await fetchShippingData(shippingOption.url);
-                  console.log(data);
-                  dbrandShippingEmbed.addField(`${shippingOption.title}`, `${json.url}`, true);
                 }
+                return shippingData;
               };
 
             } catch (error) {
