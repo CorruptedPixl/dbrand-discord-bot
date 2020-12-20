@@ -72,7 +72,6 @@ module.exports = {
 
           if (args[1].length === 2 && isTextOnly){
             try {
-              // args[1] = args[1].toLowerCase();
               // Try getting the data from dbrand's shipping api
               fetch(`${shippingDataUrl}${args[1]}`)
                 .then(res => res.json())
@@ -97,13 +96,13 @@ module.exports = {
                   return;
                 }
 
-                const encodedURI = encodeURI(`${link}shipping/${json.country}`);
+                const countrySafe = json.country.replace(`the `, ``).replace(/\s+/g, `-`).toLowerCase();
+                const encodedURI = encodeURI(`${link}shipping/${countrySafe}`);
                 const shippingOptions = await loadShippingOptions(json);
 
                 const dbrandShippingEmbed = new Discord.MessageEmbed()
                   .setTitle(`Shipping to ${json.country}`)
-                  .setDescription(`Click the link above to see shipping time to ${json.country}. \n[View all destinations](https://dbrand.com/shipping)  |  [Check shipping status](https://dbrand.com/status#main-content:~:text=${encodeURI(json.country)})`)
-                  // .addField(`\u200B`, `\u200B`)
+                  .setDescription(`Click the link above to see shipping time to ${json.country}. \n[View all destinations](https://dbrand.com/shipping)  |  [Check shipping status](https://dbrand.com/status#main-content:~:text=${encodeURI(countrySafe.replace(/-/g, ` `))})`)
 				          .setURL(encodedURI)
                   .setColor(`#ffbb00`)
                   .setTimestamp()
