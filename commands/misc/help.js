@@ -8,7 +8,7 @@ module.exports = {
 
     const commandName = args[0];
 
-    if (args === undefined || args.length == 0) {
+    if (args === undefined || args.length === 0) {
       // don't forget to add the same categories in the command.js handler
       const categories = [`misc`, `moderation`];
       const commands = [];
