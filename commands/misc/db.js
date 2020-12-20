@@ -1,6 +1,4 @@
 const Discord = require(`discord.js`);
-//! Replace config with .env
-// const { msgDeleteDelay, prefix } = require('./config.json');
 require(`dotenv`).config();
 const fetch = require(`node-fetch`);
 const msgDeleteDelay = process.env.msgDeleteDelay;
@@ -12,6 +10,9 @@ const { shippingArray, /*howtoArray*/ } = require(`../../commands/command-config
 module.exports = {
   run: async (client, message, args) => {
 
+    // Maps whole array and turns into lowercase for checks later
+    args = args.map(arg => arg = arg.toLowerCase());
+
     // Defines global variables
     let destination;
     // Sets standard link to add to later
@@ -19,7 +20,7 @@ module.exports = {
 
 
     // Deletes user message and sends an error if they don't give any args
-    if (args.length == 0) {
+    if (args.length === 0) {
       message.delete();
       message.channel.send(`No argument. Please use !db *argument*`);
     }
@@ -71,7 +72,7 @@ module.exports = {
 
           if (args[1].length === 2 && isTextOnly){
             try {
-              args[1] = args[1].toLowerCase();
+              // args[1] = args[1].toLowerCase();
               // Try getting the data from dbrand's shipping api
               fetch(`${shippingDataUrl}${args[1]}`)
                 .then(res => res.json())
@@ -89,6 +90,11 @@ module.exports = {
               const fillData = async json => {
                 if (!json.is_valid){
                   throw new Error(`Invalid country code`);
+                } 
+                // Check that shipping is available
+                else if (!json.shipping_available) {
+                  message.reply(json.unavailable_message.split(`.`)[0]);
+                  return;
                 }
 
                 const encodedURI = encodeURI(`${link}shipping/${json.country}`);
@@ -96,7 +102,8 @@ module.exports = {
 
                 const dbrandShippingEmbed = new Discord.MessageEmbed()
                   .setTitle(`Shipping to ${json.country}`)
-                  .setDescription(`Click the link above to see shipping time to ${json.country}. \nYou can also [view all shipping destinations here](https://dbrand.com/shipping)`)
+                  .setDescription(`Click the link above to see shipping time to ${json.country}. \n[View all destinations](https://dbrand.com/shipping)  |  [Check shipping status](https://dbrand.com/status#main-content:~:text=${encodeURI(json.country)})`)
+                  // .addField(`\u200B`, `\u200B`)
 				          .setURL(encodedURI)
                   .setColor(`#ffbb00`)
                   .setTimestamp()
@@ -248,7 +255,7 @@ module.exports = {
       // .setFooter('dbrand.com', 'attachment://db-logo.png')
 
 
-      if (args[0] != `shipping` && args[0] != `ship`) {
+      if (args[0] !== `shipping` && args[0] !== `ship`) {
         message.channel.send(dbEmbedLink);
       }
 
