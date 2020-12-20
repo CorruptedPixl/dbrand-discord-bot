@@ -71,6 +71,7 @@ module.exports = {
 
           if (args[1].length === 2 && isTextOnly){
             try {
+              args[1] = args[1].toLowerCase();
               // Try getting the data from dbrand's shipping api
               fetch(`${shippingDataUrl}${args[1]}`)
                 .then(res => res.json())
